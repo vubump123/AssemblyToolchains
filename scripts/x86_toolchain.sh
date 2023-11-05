@@ -1,10 +1,10 @@
 #! /bin/bash
 
-# Created by Lubos Kuzma
-# ISS Program, SADT, SAIT
+# Script created by Lubos Kuzma
+# For the ISS Program at SADT, SAIT
 # August 2022
 
-
+# Check if at least one argument is provided, if not show usage
 if [ $# -lt 1 ]; then
 	echo "Usage:"
 	echo ""
@@ -13,64 +13,67 @@ if [ $# -lt 1 ]; then
 	echo "-v | --verbose                Show some information about steps performed."
 	echo "-g | --gdb                    Run gdb command on executable."
 	echo "-b | --break <break point>    Add breakpoint after running gdb. Default is _start."
-	echo "-r | --run                    Run program in gdb automatically. Same as run command inside gdb env."
+	echo "-r | --run                    Run program in gdb automatically. Same as run command inside gdb environment."
 	echo "-q | --qemu                   Run executable in QEMU emulator. This will execute the program."
 	echo "-64| --x86-64                 Compile for 64bit (x86-64) system."
-	echo "-o | --output <filename>      Output filename."
-
+	echo "-o | --output <filename>      Specify the output filename."
 	exit 1
 fi
 
-POSITIONAL_ARGS=()
-GDB=False
-OUTPUT_FILE=""
-VERBOSE=False
-BITS=False
-QEMU=False
-BREAK="_start"
-RUN=False
+# Initialize variables for arguments and flags
+POSITIONAL_ARGS=() # Array to hold the positional arguments
+GDB=False          # Flag to indicate if GDB should be run
+OUTPUT_FILE=""     # The name of the output file, empty by default
+VERBOSE=False      # Flag to indicate if verbose output is enabled
+BITS=False         # Flag for 64-bit compilation mode
+QEMU=False         # Flag to indicate if QEMU should be run
+BREAK="_start"     # Default breakpoint location
+RUN=False          # Flag to indicate if the program should be run automatically in GDB
+
+# Loop over all arguments
 while [[ $# -gt 0 ]]; do
 	case $1 in
 		-g|--gdb)
-			GDB=True
-			shift # past argument
+			GDB=True          # Set GDB flag to true
+			shift             # Move past the argument
 			;;
 		-o|--output)
-			OUTPUT_FILE="$2"
-			shift # past argument
-			shift # past value
+			OUTPUT_FILE="$2"  # Set the output file to the specified name
+			shift             # Move past the argument
+			shift             # Move past the value
 			;;
 		-v|--verbose)
-			VERBOSE=True
-			shift # past argument
+			VERBOSE=True      # Enable verbose output
+			shift             # Move past the argument
 			;;
-		-64|--x84-64)
-			BITS=True
-			shift # past argument
+		-64|--x86-64)
+			BITS=True         # Set 64-bit compilation flag
+			shift             # Move past the argument
 			;;
 		-q|--qemu)
-			QEMU=True
-			shift # past argument
+			QEMU=True         # Set QEMU flag to true
+			shift             # Move past the argument
 			;;
 		-r|--run)
-			RUN=True
-			shift # past argument
+			RUN=True          # Set the run flag to true
+			shift             # Move past the argument
 			;;
 		-b|--break)
-			BREAK="$2"
-			shift # past argument
-			shift # past value
+			BREAK="$2"        # Set the breakpoint to the specified location
+			shift             # Move past the argument
+			shift             # Move past the value
 			;;
 		-*|--*)
-			echo "Unknown option $1"
-			exit 1
+			echo "Unknown option $1"  # Inform the user of an unknown option
+			exit 1                    # Exit the script with an error
 			;;
 		*)
-			POSITIONAL_ARGS+=("$1") # save positional arg
-			shift # past argument
+			POSITIONAL_ARGS+=("$1")   # Save positional argument
+			shift                     # Move past the argument
 			;;
 	esac
 done
+# Continue the script with further processing...
 
 set -- "${POSITIONAL_ARGS[@]}" # restore positional parameters
 
